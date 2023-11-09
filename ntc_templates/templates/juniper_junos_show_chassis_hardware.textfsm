@@ -1,6 +1,10 @@
 Value Filldown FPC (\d+)
 Value Filldown MIC (\d+)
 Value Filldown PIC (\d+)
+Value Filldown FPCVERSION (\d+)
+Value Filldown FPCPART (\d+-\d+)
+Value Filldown FPCSERIAL (\w+)
+Value Filldown FPCDESC (.*)
 Value XCVR (\d+)
 Value PART (\S+)
 Value SERIAL (\S+)
@@ -10,8 +14,8 @@ Start
   ^Hardware.*
   ^Item\s+Version\s+Part\s+number\s+Serial\s+number\s+Description\s*$$
   ^\s*(Chassis|Midplane|Pseudo|FPM|Routing\s+Engine|Mi\S+|CB|AFEB|Routing|PEM|TFEB|CPU|QXM|Power\s+Supply|Fan\s+Tray).*
-  ^.*FPC\s+${FPC}.*$$ -> FPC
-  ^{master
+  ^.*FPC\s+${FPC}\s+REV\s+${FPCVERSION}\s+${FPCPART}\s+${FPCSERIAL}\s+${FPCDESC}$$ -> FPC
+  #^{master:\d+}
   ^\s*$$ 
   ^. -> Error
 
