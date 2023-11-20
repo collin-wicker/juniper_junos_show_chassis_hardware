@@ -49,6 +49,25 @@ Value SWITCH_EGRESS_POLICY_DROPS (\d+)
 Value IN_RESET_DROPS (\d+)
 Value OUT_RESET_DROPS (\d+)
 Value VLAN_ID (\d+)
+# 
+# Traffic Statistics for Interface Zone States
+#
+Value ZONE (\w+)
+Value ZONE_INPUT_TOTAL_PACKETS (\d+)
+Value ZONE_INPUT_TOTAL_BYTES (\d+)
+Value ZONE_OUTPUT_TOTAL_PACKETS (\d+)
+Value ZONE_OUTPUT_TOTAL_BYTES (\d+)
+Value ZONE_TOTAL_DROPPED_PACKETS (\d+)
+Value ZONE_INPUT_RATE_PACKETS_SECOND_1MINUTE (\d+)
+Value ZONE_INPUT_RATE_BYTES_SECOND_1MINUTE (\d+)
+Value ZONE_OUTPUT_RATE_PACKETS_SECOND_1MINUTE (\d+)
+Value ZONE_OUTPUT_RATE_BYTES_SECOND_1MINUTE (\d+)
+Value ZONE_TOTAL_DROPPED_PACKETS_SECOND_1MINUTE (\d+)
+Value ZONE_INPUT_RATE_PACKETS_SECOND_5MINUTE (\d+)
+Value ZONE_INPUT_RATE_BYTES_SECOND_5MINUTE (\d+)
+Value ZONE_OUTPUT_RATE_PACKETS_SECOND_5MINUTE (\d+)
+Value ZONE_OUTPUT_RATE_BYTES_SECOND_5MINUTE (\d+)
+Value ZONE_TOTAL_DROPPED_PACKETS_SECOND_5MINUTE (\d+)
 #
 # Control Point Interface States
 #
@@ -81,6 +100,7 @@ Start
   ^Interface -> Continue.Record
   ^Interface\s+${INTERFACE}\s+"${INTERFACE_NAME}",\s+is\s+${LINK_STATUS},\s+line\s+protocol\s+is\s+${PROTOCOL_STATUS}
   ^\s+Hardware\s+is\s+${HARDWARE_TYPE}.*BW\s+${BANDWIDTH}.*DLY\s+${DELAY}
+  ^\s+Hardware\s+is\s+${HARDWARE_TYPE}\s+MAC\s+address\s+${MAC_ADDRESS}.*MTU\s+${MTU}\s*$$
   ^\s+\S*${DUPLEX}\S*,\s+\S*?${SPEED}(?:\)|\S+)\s*$$
   ^\s+Input\s+flow\s+control\s+is\s+${FLOWCONTROL_IN},\s+output\s+flow\s+control\s+is\s+${FLOWCONTROL_OUT}
   ^\s+Active\s+member\s+of\s+${BONDED_PORT}\s*$$
@@ -107,6 +127,7 @@ Start
   ^\s+output\s+queue
   ^\s+Queue\s+Stats:
   ^\s+VLAN\s+identifier\s+${VLAN_ID}
+  ^\s+Traffic\s+Statistics\s+for\s+"${ZONE}": -> TrafficStatistics
   ^\s+Control\s+Point\s+Interface\s+States -> ControlPoint
   ^\s+RX\[${RXRING_NUMBER}\]:\s+${RXRING_PACKETS}\s+packets,\s+${RXRING_BYTES}\s+bytes,\s+${RXRING_OVERRUN}\s+overrun -> RXRingBlocks
   ^\s+TX\[${TXRING_NUMBER}\]:\s+${TXRING_PACKETS}\s+packets,\s+${TXRING_BYTES}\s+bytes,\s+${TXRING_UNDERRUN}\s+underruns -> TXRingBlocks
@@ -116,6 +137,18 @@ Start
   ^\s+Topology\s+Information: -> Topology
   ^\s*$$
   ^. -> Error
+
+TrafficStatistics
+  ^\s+${ZONE_INPUT_TOTAL_PACKETS}\s+packets\s+input,\s+${ZONE_INPUT_TOTAL_BYTES}\s+bytes
+  ^\s+${ZONE_OUTPUT_TOTAL_PACKETS}\s+packets\s+output,\s+${ZONE_OUTPUT_TOTAL_BYTES}\s+bytes
+  ^\s+${ZONE_TOTAL_DROPPED_PACKETS}\s+packets\s+dropped
+  ^\s+1\s+minute\s+input\s+rate\s+${ZONE_INPUT_RATE_PACKETS_SECOND_1MINUTE}\s+pkts/sec,\s+${ZONE_INPUT_RATE_BYTES_SECOND_1MINUTE}\s+bytes/sec
+  ^\s+1\s+minute\s+output\s+rate\s+${ZONE_OUTPUT_RATE_PACKETS_SECOND_1MINUTE}\s+pkts/sec,\s+${ZONE_OUTPUT_RATE_BYTES_SECOND_1MINUTE}\s+bytes/sec
+  ^\s+1\s+minute\s+drop\s+rate,\s+${ZONE_TOTAL_DROPPED_PACKETS_SECOND_1MINUTE}\s+pkts/sec
+  ^\s+5\s+minute\s+input\s+rate\s+${ZONE_INPUT_RATE_PACKETS_SECOND_5MINUTE}\s+pkts/sec,\s+${ZONE_INPUT_RATE_BYTES_SECOND_5MINUTE}\s+bytes/sec
+  ^\s+5\s+minute\s+output\s+rate\s+${ZONE_OUTPUT_RATE_PACKETS_SECOND_5MINUTE}\s+pkts/sec,\s+${ZONE_OUTPUT_RATE_BYTES_SECOND_5MINUTE}\s+bytes/sec
+  ^\s+5\s+minute\s+drop\s+rate,\s+${ZONE_TOTAL_DROPPED_PACKETS_SECOND_5MINUTE}\s+pkts/sec
+  ^\s+Control\s+Point\s+Interface\s+States -> ControlPoint
 
 ControlPoint
   ^\s+Interface\s+number\s+is\s+${CONTROL_INTERFACE_NUMBER}
